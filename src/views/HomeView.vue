@@ -1,14 +1,15 @@
 <template>
   <div class="home">
-    <div class="title">금주 Lotation Champions</div>
+    <h1 class="title">금주 Lotation Champions</h1>
     <!-- <div v-for="(item, i) in champions" :key="i">
       {{ item.name }}
     </div> -->
+    <div v-for="champion in rota_champ" :key="champion.key" class="contents">
+      <img :src="DefaultImgURL + champion.id + '.png'" class="champ_img" />
+      <p>{{ champion.title }}</p>
+      <h3>{{ champion.name }}</h3>
+    </div>
   </div>
-  <span v-for="champion in rota_champ" :key="champion.key">
-    <img :src="DefaultImgURL + champion.id + '.png'" class="champ_img" />
-    <span>{{ champion.id }}</span>
-  </span>
 </template>
 
 <script>
@@ -82,8 +83,9 @@ div {
 }
 
 .home {
-  width: 100%;
-  margin-top: 100px;
+  width: 700px;
+  height: 100%;
+  margin: 0 auto;
 }
 
 .title {
@@ -91,9 +93,19 @@ div {
   font-weight: bold;
 }
 
+.contents {
+  display: inline-block;
+  width: 340px;
+  height: 100%;
+  vertical-align: top;
+  background: rgba(239, 240, 214, 0.7);
+  border: 0.5px solid rgba(0, 0, 0, 0.5);
+  margin: 5px;
+}
+
 .champ_img {
   cursor: pointer;
-  width: 15%;
-  padding: 15px;
+  width: 40%;
+  padding-top: 10px;
 }
 </style>
