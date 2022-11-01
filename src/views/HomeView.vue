@@ -16,7 +16,7 @@
       <img :src="DefaultImgURL + champion.id + '.png'" class="champ_img" />
       <p>{{ champion.title }}</p>
       <h3>{{ champion.name }}</h3>
-      <span @click="clickSpan(champion)" class="spanButton">blurb</span>
+      <span @click="clickSpan(champion)" class="spanButton">Click</span>
     </div>
   </div>
 
@@ -136,7 +136,7 @@ div {
 }
 .white-bg {
   width: 100%;
-  height: 300px;
+  height: 400px;
   background: white;
   border-radius: 8px;
   margin-top: 50px;
