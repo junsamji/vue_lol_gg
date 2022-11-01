@@ -23,6 +23,7 @@
   <div class="home" v-else>
     <h1 class="title">Developer API가 만료되었습니다.</h1>
     <p>API Key 갱신이 필요합니다.</p>
+    <p>개발자에게 알려주세요 :)</p>
   </div>
 </template>
 
@@ -86,7 +87,7 @@ export default {
     getRotatitionLocal() {
       this.rotations = JSON.parse(localStorage.getItem('lsRotations'))
       // console.log('local:' + this.rotations.freeChampionIds)
-      // this.setRota_champ()
+      this.setRota_champ()
     },
 
     setRota_champ() {
