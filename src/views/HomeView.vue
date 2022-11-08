@@ -45,8 +45,13 @@ export default {
   mounted() {
     window.addEventListener('beforeunload', this.unLoadEvent)
 
-    const toDay = new Date()
+    const now = new Date()
+    const toMonth = now.getMonth() + 1
+    const toDate = now.getDate()
     const lsRotations = localStorage.getItem('lsRotations')
+
+    console.log(toMonth)
+    console.log(toDate)
 
     if (lsRotations === null) {
       setTimeout(() => {
@@ -54,11 +59,11 @@ export default {
       }, 1500)
     }
 
-    if (localStorage.getItem('day') === null) {
-      localStorage.setItem('day', toDay.getDay())
+    if (localStorage.getItem('date') === null) {
+      localStorage.setItem('date', String(toMonth) + String(toDate))
     }
 
-    if (localStorage.getItem('day') === String(toDay.getDay())) {
+    if (localStorage.getItem('date') === String(toMonth) + String(toDate)) {
       this.getRotatitionLocal()
     } else {
       setTimeout(() => {
