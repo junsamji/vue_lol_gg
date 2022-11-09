@@ -66,6 +66,7 @@ export default {
     if (localStorage.getItem('date') === String(toMonth) + String(toDate)) {
       this.getRotatitionLocal()
     } else {
+      localStorage.setItem('date', String(toMonth) + String(toDate))
       setTimeout(() => {
         this.getRotatitionAPI()
       }, 1100)
