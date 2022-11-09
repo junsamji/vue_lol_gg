@@ -56,7 +56,7 @@ export default {
     if (lsRotations === null) {
       setTimeout(() => {
         this.getRotatitionAPI()
-      }, 1500)
+      }, 1100)
     }
 
     if (localStorage.getItem('date') === null) {
@@ -68,7 +68,7 @@ export default {
     } else {
       setTimeout(() => {
         this.getRotatitionAPI()
-      }, 1500)
+      }, 1100)
     }
   },
   beforeUnmount() {
@@ -163,7 +163,7 @@ div {
 
 .contents {
   display: inline-block;
-  width: 340px;
+  width: 100%;
   height: 100%;
   vertical-align: top;
   background: rgba(239, 240, 214, 0.7);
