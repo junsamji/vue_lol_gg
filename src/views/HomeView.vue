@@ -39,7 +39,8 @@ export default {
       rotations: {},
       rota_champ: [],
       modal: false,
-      modal_data: {}
+      modal_data: {},
+      date: ''
     }
   },
   mounted() {
@@ -49,24 +50,17 @@ export default {
     const toMonth = now.getMonth() + 1
     const toDate = now.getDate()
     const lsRotations = localStorage.getItem('lsRotations')
+    this.date = String(toMonth) + String(toDate)
 
-    console.log(toMonth)
-    console.log(toDate)
-
-    if (lsRotations === null) {
+    if (lsRotations === null || localStorage.getItem('date') === null) {
       setTimeout(() => {
         this.getRotatitionAPI()
       }, 1100)
     }
 
-    if (localStorage.getItem('date') === null) {
-      localStorage.setItem('date', String(toMonth) + String(toDate))
-    }
-
-    if (localStorage.getItem('date') === String(toMonth) + String(toDate)) {
+    if (localStorage.getItem('date') === this.date) {
       this.getRotatitionLocal()
     } else {
-      localStorage.setItem('date', String(toMonth) + String(toDate))
       setTimeout(() => {
         this.getRotatitionAPI()
       }, 1100)
@@ -81,11 +75,14 @@ export default {
         'https://kr.api.riotgames.com/lol/platform/v3/champion-rotations'
 
       const apiKey = process.env.VUE_APP_RIOT_KEY
+      localStorage.removeItem(this.lsRotations)
 
       this.$axios.get(`${baseURI}?api_key=${apiKey}`, '', '').then((res) => {
-        // this.rotations = res.data.freeChampionIds
         this.rotations = res.data
         localStorage.setItem('lsRotations', JSON.stringify(res.data))
+        if (res.data.freeChampionIds.length > 0) {
+          localStorage.setItem('date', this.date)
+        }
         this.setRota_champ()
       })
     },
@@ -130,9 +127,32 @@ export default {
 </script>
 
 <style>
+@media screen and (min-width: 769px) {
+  .contents {
+    display: inline-block;
+    height: 100%;
+    background: rgba(239, 240, 214, 0.7);
+    border: 0.5px solid rgba(0, 0, 0, 0.5);
+    margin: 2px;
+    padding-bottom: 5px;
+  }
+}
+@media only screen and (max-width: 769px) {
+  .contents {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background: rgba(239, 240, 214, 0.7);
+    border: 0.5px solid rgba(0, 0, 0, 0.5);
+    margin: 2px;
+    padding-bottom: 5px;
+  }
+}
+
 div {
   box-sizing: border-box;
 }
+
 .black-bg {
   width: 100%;
   height: 100%;
@@ -140,6 +160,7 @@ div {
   position: fixed;
   padding: 20px;
 }
+
 .white-bg {
   width: 100%;
   height: 400px;
@@ -162,20 +183,10 @@ div {
   font-weight: bold;
 }
 
-.contents {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  vertical-align: top;
-  background: rgba(239, 240, 214, 0.7);
-  border: 0.5px solid rgba(0, 0, 0, 0.5);
-  margin: 2px;
-  padding-bottom: 5px;
-}
-
 .champ_img {
+  max-width: 150px;
   width: 40%;
-  padding-top: 10px;
+  padding-top: 5px;
 }
 
 .spanButton {

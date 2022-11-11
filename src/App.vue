@@ -1,7 +1,8 @@
 <template>
   <nav>
     <router-link to="/">로테이션 챔프</router-link> |
-    <router-link to="/about">전적</router-link>
+    <router-link to="/about">전적</router-link> |
+    <router-link to="/editor">Q&A</router-link>
   </nav>
   <router-view />
 </template>
@@ -16,12 +17,15 @@
 }
 
 nav {
+  width: 88%;
   background: darkslateblue;
   padding: 15px;
+  text-align: center;
   border-radius: 10px;
-  width: 100%;
   position: fixed;
   top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
 }
 
 nav a {
