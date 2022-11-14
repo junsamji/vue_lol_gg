@@ -1,2 +1,2 @@
 "use strict";(self["webpackChunkvue_lol_gg"]=self["webpackChunkvue_lol_gg"]||[]).push([[443],{9319:function(c,n,s){s.r(n),s.d(n,{default:function(){return _}});var a=s(3396);const u=c=>((0,a.dD)("data-v-d9ac1cc2"),c=c(),(0,a.Cn)(),c),l={class:"about"},r=u((()=>(0,a._)("h1",null,"전적 검색",-1))),t=["src"],e=u((()=>(0,a._)("p",null,"From. 쭌sss",-1)));function o(c,n){return(0,a.wg)(),(0,a.iD)("div",l,[r,(0,a._)("img",{src:s(7816),class:"back_img"},null,8,t),e])}var d=s(89);const i={},g=(0,d.Z)(i,[["render",o],["__scopeId","data-v-d9ac1cc2"]]);var _=g},7816:function(c,n,s){c.exports=s.p+"img/coding_ing.151dbba9.png"}}]);
-//# sourceMappingURL=about.9fdd4107.js.map
+//# sourceMappingURL=about.e57b2d8e.js.map
