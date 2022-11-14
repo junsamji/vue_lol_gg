@@ -127,6 +127,9 @@ export default {
 </script>
 
 <style>
+@import '@/style/common.css';
+</style>
+<style scope>
 @media screen and (min-width: 769px) {
   .contents {
     display: inline-block;
@@ -152,26 +155,6 @@ export default {
 div {
   box-sizing: border-box;
 }
-
-.black-bg {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  padding: 20px;
-}
-
-.white-bg {
-  width: 100%;
-  height: 400px;
-  background: white;
-  border-radius: 8px;
-  margin-top: 50px;
-  padding: 20px;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
 .home {
   width: 80%;
   height: 100%;
@@ -187,12 +170,5 @@ div {
   max-width: 150px;
   width: 40%;
   padding-top: 5px;
-}
-
-.spanButton {
-  cursor: pointer;
-  background: peachpuff;
-  border: 0px;
-  padding: 1px 3px;
 }
 </style>

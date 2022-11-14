@@ -16,7 +16,8 @@ export default {
       ckEditor.setData(content.value)
       // on change event
       ckEditor.on('change', () => {
-        emit('sendContent', ckEditor.getData())
+        // emit('sendContent', ckEditor.getData())
+        emit('sendContent', ckEditor.document.getBody().getHtml())
       })
     })
     watch(content, () => {
