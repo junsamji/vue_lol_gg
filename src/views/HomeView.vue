@@ -8,7 +8,7 @@
   </div>
 
   <div class="home" v-if="rota_champ.length > 0">
-    <h1 class="title">금주 Lotation Champions</h1>
+    <h1 class="title">금주 Rotation Champions</h1>
     <!-- <div v-for="(item, i) in champions" :key="i">
       {{ item.name }}
     </div> -->
