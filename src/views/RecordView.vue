@@ -141,7 +141,6 @@ hr {
   min-width: 300px;
   margin-left: auto;
   margin-right: auto;
-  border: 1px solid black;
 }
 
 .profile_img {
