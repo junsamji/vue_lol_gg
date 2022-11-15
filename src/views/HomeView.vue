@@ -13,7 +13,8 @@
       {{ item.name }}
     </div> -->
     <div v-for="champion in rota_champ" :key="champion.key" class="contents">
-      <img :src="DefaultImgURL + champion.id + '.png'" class="champ_img" />
+      <!-- <img :src="DefaultImgURL + champion.id + '.png'" class="champ_img" /> -->
+      <img :src="DefaultImgURL + champion.id + '_0.jpg'" class="champ_img" />
       <p>{{ champion.title }}</p>
       <h3>{{ champion.name }}</h3>
       <span @click="clickSpan(champion)" class="spanButton">Click</span>
@@ -34,7 +35,10 @@ export default {
   name: 'HomeView',
   data() {
     return {
-      DefaultImgURL: process.env.VUE_APP_RIOT_IMG,
+      // 박스이미지 + champion.id + .png
+      // DefaultImgURL: process.env.VUE_APP_RIOT_IMG,
+      // 로딩이미지 + champion.id + _0.png (number to skins)
+      DefaultImgURL: process.env.VUE_APP_RIOT_LOADING_IMG,
       champions: championsJson.data,
       rotations: {},
       rota_champ: [],
@@ -167,7 +171,7 @@ div {
 }
 
 .champ_img {
-  max-width: 150px;
+  max-width: 200px;
   width: 40%;
   padding-top: 5px;
 }
