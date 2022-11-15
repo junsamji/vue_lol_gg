@@ -1,7 +1,7 @@
 <template>
   <nav>
     <router-link to="/">로테이션 챔프</router-link> |
-    <router-link to="/about">전적</router-link> |
+    <router-link to="/record">소환사 조회</router-link> |
     <router-link to="/editor">Q&A</router-link>
   </nav>
   <router-view />
