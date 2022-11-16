@@ -14,10 +14,20 @@
               <span>소환사명..</span>
             </th>
             <th>
-              <input type="text" v-model="summoner_name" />
+              <input
+                type="text"
+                v-model="summoner_name"
+                @keyup.enter="searchSpan"
+              />
             </th>
             <th>
-              <span class="spanButton" @click="searchSpan">조회</span>
+              <!-- <span class="spanButton" @click="searchSpan">조회</span> -->
+              <q-btn
+                round
+                color="secondary"
+                icon="search"
+                @click="searchSpan"
+              />
             </th>
           </tr>
         </thead>
@@ -57,10 +67,16 @@
         </tbody>
       </table>
     </div>
+    <div v-else>
+      <h5>본인이나 친구의 소환사명을</h5>
+      <h5>조회해보세요 :)</h5>
+    </div>
   </div>
 </template>
 
 <script>
+import { QSpinnerFacebook } from 'quasar'
+
 export default {
   name: 'RecordView',
   data() {
@@ -71,12 +87,30 @@ export default {
       summoner_information: {}
     }
   },
+  watch: {
+    summoner_name: function (val) {
+      if (val === '') this.summoner_information.puuid = undefined
+    }
+  },
   methods: {
     searchSpan() {
+      this.$q.loading.show({
+        spinner: QSpinnerFacebook,
+        spinnerColor: 'deep-purple-7',
+        spinnerSize: 140,
+        backgroundColor: 'grey-9',
+        message: '잠시만 기다려주세요..',
+        messageColor: 'yellow'
+      })
+      // this.show({ message: 'test...' })
+
       // alert('[' + this.summoner_name + ']님 현재 작업 중 입니다 ^^;')
-      this.getSummoners()
+      setTimeout(() => {
+        this.getSummonersAPI()
+        this.$q.loading.hide()
+      }, 500)
     },
-    getSummoners() {
+    getSummonersAPI() {
       const baseURI =
         'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name'
       const apiKey = process.env.VUE_APP_RIOT_KEY
