@@ -16,7 +16,7 @@
       <!-- <img :src="DefaultImgURL + champion.id + '.png'" class="champ_img" /> -->
       <img :src="DefaultImgURL + champion.id + '_0.jpg'" class="champ_img" />
       <p>{{ champion.title }}</p>
-      <h3>{{ champion.name }}</h3>
+      <h5>{{ champion.name }}</h5>
       <span @click="clickSpan(champion)" class="spanButton">Click</span>
     </div>
   </div>
@@ -55,18 +55,22 @@ export default {
     const toDate = now.getDate()
     const lsRotations = localStorage.getItem('lsRotations')
     this.date = String(toMonth) + String(toDate)
+    this.$q.loading.show({ message: '잠시만 기다려주세요..' })
 
     if (lsRotations === null || localStorage.getItem('date') === null) {
       setTimeout(() => {
         this.getRotatitionAPI()
+        this.$q.loading.hide()
       }, 1100)
     }
 
     if (localStorage.getItem('date') === this.date) {
       this.getRotatitionLocal()
+      this.$q.loading.hide()
     } else {
       setTimeout(() => {
         this.getRotatitionAPI()
+        this.$q.loading.hide()
       }, 1100)
     }
   },
