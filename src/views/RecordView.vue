@@ -35,41 +35,47 @@
     </div>
     <hr />
     <div v-if="summoner_information.puuid !== undefined">
-      <table class="center_table">
-        <thead>
-          <tr>
-            <th>
-              <span>소환사정보 갱신</span>
-            </th>
-            <th colspan="3">
-              <span>{{ summoner_information.revisionDate }}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <img
-                :src="
-                  profile_img_url + summoner_information.profileIconId + '.png'
-                "
-                class="profile_img"
-              />
-            </td>
-            <td colspan="2">
-              <span>{{ summoner_information.name }}</span>
-            </td>
-            <td>
-              <span>Lv</span
-              ><span>{{ summoner_information.summonerLevel }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="row justify-center">
+        <div class="col text-center">
+          <q-badge
+            outline
+            color="primary"
+            :label="'latest. ' + summoner_information.revisionDate"
+          />
+        </div>
+        <div class="col" />
+        <div class="col" />
+      </div>
+      <div class="row flex-center" style="margin-top: 5px">
+        <div class="col text-right">
+          <q-avatar>
+            <img
+              :src="
+                profile_img_url + summoner_information.profileIconId + '.png'
+              "
+              class="profile_img"
+            />
+          </q-avatar>
+        </div>
+        <div class="col text-center">
+          {{ summoner_information.name }}
+        </div>
+        <div class="col text-left">
+          Lv {{ summoner_information.summonerLevel }}
+        </div>
+      </div>
     </div>
-    <div v-else>
-      <h5>본인이나 친구의 소환사명을</h5>
-      <h5>조회해보세요 :)</h5>
+    <div v-else style="padding-top: 30px">
+      <div class="row flex-center">
+        <div class="col" />
+        <div class="col text-left">본인이나 친구의 소환사명을</div>
+        <div class="col" />
+      </div>
+      <div class="row flex-center">
+        <div class="col" />
+        <div class="col text-left text-h6">조회 해보세요 :)</div>
+        <div class="col" />
+      </div>
     </div>
   </div>
 </template>
