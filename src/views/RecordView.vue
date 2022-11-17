@@ -49,27 +49,29 @@
         <div class="col-2" />
       </div>
     </div> -->
-    <div v-else class="q-pa-md row justify-center">
-      <div style="width: 100%; max-width: 400px">
-        <q-chat-message
-          name="vue_lol_gg"
-          :avatar="require('@/assets/jew.png')"
-          :text="[messages.message1]"
-          stamp="2 seconds ago"
-          sent
-          bg-color="grey-4"
-        />
-        <q-chat-message
-          name="vue_lol_gg"
-          :avatar="require('@/assets/jew.png')"
-          :text="[messages.message2]"
-          stamp="1 seconds ago"
-          sent
-          bg-color="grey-4"
-        />
-        <q-chat-message v-if="!apiError" name="You" bg-color="amber">
-          <q-spinner-dots size="2rem" />
-        </q-chat-message>
+    <div v-else>
+      <div class="q-pa-md row justify-center">
+        <div style="width: 100%; max-width: 400px">
+          <q-chat-message
+            name="vue_lol_gg"
+            :avatar="require('@/assets/jew.png')"
+            :text="[messages.message1]"
+            stamp="2 seconds ago"
+            sent
+            bg-color="grey-4"
+          />
+          <q-chat-message
+            name="vue_lol_gg"
+            :avatar="require('@/assets/jew.png')"
+            :text="[messages.message2]"
+            stamp="1 seconds ago"
+            sent
+            bg-color="grey-4"
+          />
+          <q-chat-message v-if="!apiError" name="You" bg-color="amber">
+            <q-spinner-dots size="2rem" />
+          </q-chat-message>
+        </div>
       </div>
     </div>
     <hr />
@@ -164,14 +166,13 @@ export default {
           // this.setRota_champ()
           this.apiError = false
           this.summoner_information = res.data
-          // console.log(this.summoner_information.puuid)
           this.timeStampConversion()
         })
         .catch((error) => {
           this.apiError = true
           this.messages.message1 = '개발자API가 만료된 것 같습니다.'
           this.messages.message2 = 'API KEY 갱신이 필요합니다.'
-          console.log(error)
+          console.log(JSON.stringify(error))
         })
 
       this.$q.loading.hide()
@@ -207,7 +208,7 @@ hr {
 
 .record {
   width: 100%;
-  padding-top: 40px;
+  padding-top: 60px;
 }
 
 .back_img {
