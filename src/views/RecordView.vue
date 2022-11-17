@@ -6,34 +6,6 @@
   </div>
 
   <div class="record" v-else>
-    <div>
-      <table class="center_table">
-        <thead>
-          <tr>
-            <th>
-              <span>소환사명..</span>
-            </th>
-            <th>
-              <input
-                type="text"
-                v-model="summoner_name"
-                @keyup.enter="searchSpan"
-              />
-            </th>
-            <th>
-              <!-- <span class="spanButton" @click="searchSpan">조회</span> -->
-              <q-btn
-                round
-                color="secondary"
-                icon="search"
-                @click="searchSpan"
-              />
-            </th>
-          </tr>
-        </thead>
-      </table>
-    </div>
-    <hr />
     <div v-if="summoner_information.puuid !== undefined">
       <div class="row justify-center">
         <div class="col text-center">
@@ -65,17 +37,68 @@
         </div>
       </div>
     </div>
-    <div v-else style="padding-top: 30px">
+    <!-- <div v-else style="padding-top: 30px">
       <div class="row flex-center">
-        <div class="col" />
-        <div class="col text-left">본인이나 친구의 소환사명을</div>
-        <div class="col" />
+        <div class="col-2" />
+        <div class="col text-left">{{ messages.message1 }}</div>
+        <div class="col-2" />
       </div>
       <div class="row flex-center">
-        <div class="col" />
-        <div class="col text-left text-h6">조회 해보세요 :)</div>
-        <div class="col" />
+        <div class="col-2" />
+        <div class="col text-left">{{ messages.message2 }}</div>
+        <div class="col-2" />
       </div>
+    </div> -->
+    <div v-else class="q-pa-md row justify-center">
+      <div style="width: 100%; max-width: 400px">
+        <q-chat-message
+          name="vue_lol_gg"
+          :avatar="require('@/assets/jew.png')"
+          :text="[messages.message1]"
+          stamp="2 seconds ago"
+          sent
+          bg-color="grey-4"
+        />
+        <q-chat-message
+          name="vue_lol_gg"
+          :avatar="require('@/assets/jew.png')"
+          :text="[messages.message2]"
+          stamp="1 seconds ago"
+          sent
+          bg-color="grey-4"
+        />
+        <q-chat-message v-if="!apiError" name="You" bg-color="amber">
+          <q-spinner-dots size="2rem" />
+        </q-chat-message>
+      </div>
+    </div>
+    <hr />
+    <div>
+      <table class="center_table">
+        <thead>
+          <tr>
+            <th>
+              <span>소환사명..</span>
+            </th>
+            <th>
+              <input
+                type="text"
+                v-model="summoner_name"
+                @keyup.enter="searchSpan"
+              />
+            </th>
+            <th>
+              <!-- <span class="spanButton" @click="searchSpan">조회</span> -->
+              <q-btn
+                round
+                color="secondary"
+                icon="search"
+                @click="searchSpan"
+              />
+            </th>
+          </tr>
+        </thead>
+      </table>
     </div>
   </div>
 </template>
@@ -88,14 +111,23 @@ export default {
   data() {
     return {
       working: false,
+      apiError: false,
       profile_img_url: process.env.VUE_APP_PROFILE_ICON,
       summoner_name: '',
-      summoner_information: {}
+      summoner_information: {},
+      messages: {
+        message1: '안녕하세요!',
+        message2: '소환사명을 입력해보세요. :)'
+      }
     }
   },
   watch: {
     summoner_name: function (val) {
-      if (val === '') this.summoner_information.puuid = undefined
+      if (val === '') {
+        this.messages.message1 = '본인이나 친구의 소환사명을'
+        this.messages.message2 = '조회 해보세요 :)'
+        this.summoner_information.puuid = undefined
+      }
     }
   },
   methods: {
@@ -113,7 +145,6 @@ export default {
       // alert('[' + this.summoner_name + ']님 현재 작업 중 입니다 ^^;')
       setTimeout(() => {
         this.getSummonersAPI()
-        this.$q.loading.hide()
       }, 500)
     },
     getSummonersAPI() {
@@ -131,13 +162,19 @@ export default {
           //   localStorage.setItem('date', this.date)
           // }
           // this.setRota_champ()
+          this.apiError = false
           this.summoner_information = res.data
           // console.log(this.summoner_information.puuid)
           this.timeStampConversion()
         })
         .catch((error) => {
+          this.apiError = true
+          this.messages.message1 = '개발자API가 만료된 것 같습니다.'
+          this.messages.message2 = 'API KEY 갱신이 필요합니다.'
           console.log(error)
         })
+
+      this.$q.loading.hide()
     },
     timeStampConversion() {
       const dateTime = new Date(this.summoner_information.revisionDate)
@@ -170,7 +207,7 @@ hr {
 
 .record {
   width: 100%;
-  margin-top: 100px;
+  padding-top: 40px;
 }
 
 .back_img {
