@@ -4,6 +4,8 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import { Quasar, Loading, Notify } from 'quasar'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'
@@ -22,5 +24,6 @@ const app = createApp(App)
       Notify: {}
     }
   })
+  .use(AOS.init())
 app.config.globalProperties.$axios = axios
 app.mount('#app')
