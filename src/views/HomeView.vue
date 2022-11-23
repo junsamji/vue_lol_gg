@@ -10,7 +10,7 @@
     <h1 class="title animate__animated animate__zoomIn">
       금주 Rotation Champions
     </h1>
-    <!-- <div v-for="(item, i) in champions" :key="i" data-aos="fade-up">
+    <!-- <div v-for="(item, i) in champions" :key="i">
       {{ item.name }}
     </div> -->
     <div v-for="champion in rota_champ" :key="champion.key" class="contents">
