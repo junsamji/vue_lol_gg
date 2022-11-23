@@ -1,9 +1,9 @@
 <template>
-  <nav>
+  <div class="nav">
     <router-link to="/">로테이션 챔프</router-link> |
     <router-link to="/record">소환사 조회</router-link> |
     <router-link to="/editor">Q&A</router-link>
-  </nav>
+  </div>
   <router-view />
 </template>
 
@@ -16,7 +16,7 @@
   color: #2c3e50;
 }
 
-nav {
+div.nav {
   width: 88%;
   background: darkslateblue;
   padding: 15px;
@@ -26,15 +26,16 @@ nav {
   top: 0;
   left: 50%;
   transform: translate(-50%, 0);
+  z-index: 9999;
 }
 
-nav a {
+div.nav a {
   font-weight: bold;
   color: white;
   padding: 10px;
 }
 
-nav a.router-link-exact-active {
+div.nav a.router-link-exact-active {
   color: #42b983;
 }
 </style>
