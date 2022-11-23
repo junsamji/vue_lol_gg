@@ -1,36 +1,5 @@
 <template>
   <div class="record">
-    <div v-if="summoner_information.puuid !== undefined">
-      <div class="row justify-center">
-        <div class="col text-center">
-          <q-badge
-            outline
-            color="primary"
-            :label="'latest. ' + summoner_information.revisionDate"
-          />
-        </div>
-        <div class="col" />
-        <div class="col" />
-      </div>
-      <div class="row flex-center" style="margin-top: 5px">
-        <div class="col text-right">
-          <q-avatar>
-            <img
-              :src="
-                profile_img_url + summoner_information.profileIconId + '.png'
-              "
-              class="profile_img"
-            />
-          </q-avatar>
-        </div>
-        <div class="col text-center">
-          {{ summoner_information.name }}
-        </div>
-        <div class="col text-left">
-          Lv {{ summoner_information.summonerLevel }}
-        </div>
-      </div>
-    </div>
     <!-- <div v-else style="padding-top: 30px">
       <div class="row flex-center">
         <div class="col-2" />
@@ -43,7 +12,7 @@
         <div class="col-2" />
       </div>
     </div> -->
-    <div v-else>
+    <div v-if="summoner_information.puuid === undefined">
       <div class="q-pa-md row justify-center">
         <div style="width: 100%; max-width: 400px">
           <q-chat-message
@@ -97,6 +66,38 @@
           </template>
           <template v-slot:hint> LOL 소환사명을 입력하세요.. </template>
         </q-input>
+      </div>
+    </div>
+    <div v-if="summoner_information.puuid !== undefined">
+      <hr />
+      <div class="row justify-center">
+        <div class="col text-center">
+          <q-badge
+            outline
+            color="primary"
+            :label="'latest. ' + summoner_information.revisionDate"
+          />
+        </div>
+        <div class="col" />
+        <div class="col" />
+      </div>
+      <div class="row flex-center" style="margin-top: 5px">
+        <div class="col text-right">
+          <q-avatar>
+            <img
+              :src="
+                profile_img_url + summoner_information.profileIconId + '.png'
+              "
+              class="profile_img"
+            />
+          </q-avatar>
+        </div>
+        <div class="col text-center">
+          {{ summoner_information.name }}
+        </div>
+        <div class="col text-left">
+          Lv {{ summoner_information.summonerLevel }}
+        </div>
       </div>
     </div>
   </div>

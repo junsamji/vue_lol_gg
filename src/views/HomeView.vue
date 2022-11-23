@@ -7,13 +7,22 @@
     </div>
   </div>
   <div class="home" v-if="rota_champ.length > 0">
-    <h1 class="title animate__animated animate__zoomIn">
+    <h6 class="title animate__animated animate__zoomIn">
       금주 Rotation Champions
-    </h1>
-    <!-- <div v-for="(item, i) in champions" :key="i">
+    </h6>
+    <!-- <div v-for="(item, i) in champions" :key="i" data-aos="fade-up">
       {{ item.name }}
     </div> -->
-    <div v-for="champion in rota_champ" :key="champion.key" class="contents">
+    <div
+      v-for="champion in rota_champ"
+      :key="champion.key"
+      class="contents"
+      data-aos="fade-up"
+      data-aos-easing="ease-out-cubic"
+      data-aos-offset="100"
+      data-aos-delay="50"
+      data-aos-duration="1500"
+    >
       <!-- <img :src="DefaultImgURL + champion.id + '.png'" class="champ_img" /> -->
       <img :src="DefaultImgURL + champion.id + '_0.jpg'" class="champ_img" />
       <p>{{ champion.title }}</p>
@@ -198,8 +207,9 @@ div {
 }
 
 .title {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: bold;
+  line-height: 0.5rem;
 }
 
 .champ_img {
