@@ -1,11 +1,5 @@
 <template>
-  <div class="record" v-if="working">
-    <h1>전적 검색</h1>
-    <img :src="require('@/assets/coding_ing.png')" class="back_img" />
-    <p>From. 쭌sss</p>
-  </div>
-
-  <div class="record" v-else>
+  <div class="record">
     <div v-if="summoner_information.puuid !== undefined">
       <div class="row justify-center">
         <div class="col text-center">
@@ -68,39 +62,42 @@
             sent
             bg-color="grey-4"
           />
-          <q-chat-message v-if="!apiError" name="You" bg-color="amber">
+          <q-chat-message v-if="!apiError" name="Me" bg-color="amber">
             <q-spinner-dots size="2rem" />
           </q-chat-message>
         </div>
       </div>
     </div>
-    <hr />
-    <div>
-      <table class="center_table">
-        <thead>
-          <tr>
-            <th>
-              <span>소환사명..</span>
-            </th>
-            <th>
-              <input
-                type="text"
-                v-model="summoner_name"
-                @keyup.enter="searchSpan"
-              />
-            </th>
-            <th>
-              <!-- <span class="spanButton" @click="searchSpan">조회</span> -->
-              <q-btn
-                round
-                color="secondary"
-                icon="search"
-                @click="searchSpan"
-              />
-            </th>
-          </tr>
-        </thead>
-      </table>
+    <div class="q-pa-md row justify-center">
+      <div style="width: 100%; max-width: 400px">
+        <q-input
+          bottom-slots
+          v-model="summoner_name"
+          label="Summoner Name"
+          counter
+          maxlength="50"
+          @keyup.enter="searchSpan"
+        >
+          <template v-slot:append>
+            <q-icon
+              v-if="summoner_name !== ''"
+              name="close"
+              @click="summoner_name = ''"
+              class="cursor-pointer"
+            />
+          </template>
+          <template v-slot:after>
+            <q-btn
+              round
+              flat
+              color="secondary"
+              icon="send"
+              @click="searchSpan"
+            />
+          </template>
+          <template v-slot:hint> LOL 소환사명을 입력하세요.. </template>
+        </q-input>
+      </div>
     </div>
   </div>
 </template>
@@ -134,6 +131,17 @@ export default {
   },
   methods: {
     searchSpan() {
+      // this.show({ message: 'test...' })
+      if (this.summoner_name === '') {
+        this.$q.notify({
+          color: 'yellow',
+          position: 'center',
+          type: 'warning',
+          message: '소환사명을 입력하지 않았습니다.',
+          timeout: 200
+        })
+        return
+      }
       this.$q.loading.show({
         spinner: QSpinnerFacebook,
         spinnerColor: 'deep-purple-7',
@@ -142,8 +150,6 @@ export default {
         message: '잠시만 기다려주세요..',
         messageColor: 'yellow'
       })
-      // this.show({ message: 'test...' })
-
       // alert('[' + this.summoner_name + ']님 현재 작업 중 입니다 ^^;')
       setTimeout(() => {
         this.getSummonersAPI()
@@ -170,8 +176,8 @@ export default {
         })
         .catch((error) => {
           this.apiError = true
-          this.messages.message1 = '개발자API가 만료된 것 같습니다.'
-          this.messages.message2 = 'API KEY 갱신이 필요합니다.'
+          this.messages.message1 = '보여드릴 데이터가 없습니다.'
+          this.messages.message2 = '존재하는 소환사명을 입력해주세요.'
           console.log(JSON.stringify(error))
         })
 

@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from 'axios'
-import { Quasar, Loading } from 'quasar'
+import { Quasar, Loading, Notify } from 'quasar'
 
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'
@@ -16,9 +16,10 @@ const app = createApp(App)
   .use(store)
   .use(router)
   .use(Quasar, {
-    plugins: { Loading },
+    plugins: { Loading, Notify },
     config: {
-      loading: {}
+      loading: {},
+      Notify: {}
     }
   })
 app.config.globalProperties.$axios = axios

@@ -6,9 +6,10 @@
       <span @click="modal = false" class="spanButton">닫기</span>
     </div>
   </div>
-
   <div class="home" v-if="rota_champ.length > 0">
-    <h1 class="title">금주 Rotation Champions</h1>
+    <h1 class="title animate__animated animate__zoomIn">
+      금주 Rotation Champions
+    </h1>
     <!-- <div v-for="(item, i) in champions" :key="i">
       {{ item.name }}
     </div> -->
@@ -21,15 +22,16 @@
     </div>
   </div>
 
-  <div class="home" v-else>
+  <!-- <div class="home" v-else>
     <h1 class="title">Developer API가 만료되었습니다.</h1>
     <p>API Key 갱신이 필요합니다.</p>
     <p>개발자에게 알려주세요 :)</p>
-  </div>
+  </div> -->
 </template>
 
 <script>
 import championsJson from '../assets/champion'
+import { QSpinnerFacebook } from 'quasar'
 
 export default {
   name: 'HomeView',
@@ -55,30 +57,41 @@ export default {
     const toDate = now.getDate()
     const lsRotations = localStorage.getItem('lsRotations')
     this.date = String(toMonth) + String(toDate)
-    this.$q.loading.show({ message: '잠시만 기다려주세요..' })
 
     if (lsRotations === null || localStorage.getItem('date') === null) {
       setTimeout(() => {
         this.getRotatitionAPI()
-        this.$q.loading.hide()
       }, 1100)
     }
 
     if (localStorage.getItem('date') === this.date) {
       this.getRotatitionLocal()
-      this.$q.loading.hide()
     } else {
       setTimeout(() => {
         this.getRotatitionAPI()
-        this.$q.loading.hide()
       }, 1100)
     }
   },
+
   beforeUnmount() {
     window.removeEventListener('beforeunload', this.unLoadEvent)
   },
   methods: {
+    beforeEnter(el) {
+      el.style.transitionDelay = 100 * parseInt(el.dataset.index, 10) + 'ms'
+    },
+    afterEnter(el) {
+      el.style.transitionDelay = ''
+    },
     getRotatitionAPI() {
+      this.$q.loading.show({
+        spinner: QSpinnerFacebook,
+        spinnerColor: 'deep-purple-7',
+        spinnerSize: 140,
+        backgroundColor: 'grey-9',
+        message: '잠시만 기다려주세요..',
+        messageColor: 'yellow'
+      })
       const baseURI =
         'https://kr.api.riotgames.com/lol/platform/v3/champion-rotations'
 
@@ -96,6 +109,14 @@ export default {
     },
 
     getRotatitionLocal() {
+      this.$q.loading.show({
+        spinner: QSpinnerFacebook,
+        spinnerColor: 'deep-purple-7',
+        spinnerSize: 140,
+        backgroundColor: 'grey-9',
+        message: '잠시만 기다려주세요..',
+        messageColor: 'yellow'
+      })
       this.rotations = JSON.parse(localStorage.getItem('lsRotations'))
       // console.log('local:' + this.rotations.freeChampionIds)
       this.setRota_champ()
@@ -115,6 +136,13 @@ export default {
           }
         }
       })
+
+      this.$q.loading.hide()
+      // this.$q.notify({
+      //   message: '조회완료',
+      //   color: 'secondary',
+      //   position: 'bottom-right'
+      // })
     },
 
     unLoadEvent: function (event) {
@@ -178,5 +206,9 @@ div {
   max-width: 200px;
   width: 40%;
   padding-top: 5px;
+}
+
+.animate__animated.animate__zoomIn {
+  --animate-duration: 2s;
 }
 </style>
