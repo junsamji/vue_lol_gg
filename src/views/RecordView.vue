@@ -12,10 +12,11 @@
         <div class="col-2" />
       </div>
     </div> -->
-    <div v-if="summoner_information.puuid === undefined">
+    <div ref="contentDiv" :class="css_out">
       <div class="q-pa-md row justify-center">
         <div style="width: 100%; max-width: 400px">
           <q-chat-message
+            :class="css_chat1"
             name="vue_lol_gg"
             :avatar="require('@/assets/jew.png')"
             :text="[messages.message1]"
@@ -24,6 +25,7 @@
             bg-color="grey-4"
           />
           <q-chat-message
+            :class="css_chat2"
             name="vue_lol_gg"
             :avatar="require('@/assets/jew.png')"
             :text="[messages.message2]"
@@ -31,7 +33,7 @@
             sent
             bg-color="grey-4"
           />
-          <q-chat-message v-if="!apiError" name="Me" bg-color="amber">
+          <q-chat-message v-if="chating" bg-color="amber">
             <q-spinner-dots size="2rem" />
           </q-chat-message>
         </div>
@@ -40,12 +42,15 @@
     <div class="q-pa-md row justify-center">
       <div style="width: 100%; max-width: 400px">
         <q-input
+          ref="txtSummoner"
           bottom-slots
           v-model="summoner_name"
           label="Summoner Name"
           counter
           maxlength="50"
-          @keyup.enter="searchSpan"
+          @keyup.enter="keyEnter"
+          @focus="chating = true"
+          @blur="chating = false"
         >
           <template v-slot:append>
             <q-icon
@@ -57,6 +62,7 @@
           </template>
           <template v-slot:after>
             <q-btn
+              ref="btnSearch"
               round
               flat
               color="secondary"
@@ -111,14 +117,19 @@ export default {
   data() {
     return {
       working: false,
-      apiError: false,
+      chating: false,
       profile_img_url: process.env.VUE_APP_PROFILE_ICON,
       summoner_name: '',
       summoner_information: {},
       messages: {
         message1: '안녕하세요!',
         message2: '소환사명을 입력해보세요. :)'
-      }
+      },
+      css_out: 'content',
+      css_chat1:
+        'animate__animated animate__fadeIn animate__delay-1s animate__duration-5s',
+      css_chat2:
+        'animate__animated animate__fadeIn animate__delay-2s animate__duration-4s'
     }
   },
   watch: {
@@ -127,12 +138,21 @@ export default {
         this.messages.message1 = '본인이나 친구의 소환사명을'
         this.messages.message2 = '조회 해보세요 :)'
         this.summoner_information.puuid = undefined
+        this.$refs.contentDiv.style.display = 'block'
+        this.css_out = 'content'
+        this.css_chat1 =
+          'animate__animated animate__fadeIn animate__delay-1s animate__duration-5s'
+        this.css_chat2 =
+          'animate__animated animate__fadeIn animate__delay-2s animate__duration-4s'
       }
     }
   },
   methods: {
+    keyEnter() {
+      // this.$refs.txt
+      this.$refs.btnSearch.click()
+    },
     searchSpan() {
-      // this.show({ message: 'test...' })
       if (this.summoner_name === '') {
         this.$q.notify({
           color: 'yellow',
@@ -143,6 +163,8 @@ export default {
         })
         return
       }
+
+      // this.$refs.txtSummoner.blur()
       this.$q.loading.show({
         spinner: QSpinnerFacebook,
         spinnerColor: 'deep-purple-7',
@@ -151,7 +173,7 @@ export default {
         message: '잠시만 기다려주세요..',
         messageColor: 'yellow'
       })
-      // alert('[' + this.summoner_name + ']님 현재 작업 중 입니다 ^^;')
+
       setTimeout(() => {
         this.getSummonersAPI()
       }, 500)
@@ -171,12 +193,22 @@ export default {
           //   localStorage.setItem('date', this.date)
           // }
           // this.setRota_champ()
-          this.apiError = false
           this.summoner_information = res.data
           this.timeStampConversion()
+          this.css_out = 'content animate__animated animate__fadeOutUp'
+          this.css_chat1 = ''
+          this.css_chat2 = ''
+          setTimeout(() => {
+            this.$refs.contentDiv.style.display = 'none'
+          }, 100)
         })
         .catch((error) => {
-          this.apiError = true
+          this.$refs.contentDiv.style.display = 'block'
+          this.css_out = 'content'
+          this.css_chat1 =
+            'animate__animated animate__fadeIn animate__delay-1s animate__duration-5s'
+          this.css_chat2 =
+            'animate__animated animate__fadeIn animate__delay-2s animate__duration-4s'
           this.messages.message1 = '보여드릴 데이터가 없습니다.'
           this.messages.message2 = '존재하는 소환사명을 입력해주세요.'
           console.log(JSON.stringify(error))
@@ -215,7 +247,12 @@ hr {
 
 .record {
   width: 100%;
-  padding-top: 60px;
+  top: 40px;
+  transform: translateY(40px);
+}
+
+.content {
+  height: 80%;
 }
 
 .back_img {
