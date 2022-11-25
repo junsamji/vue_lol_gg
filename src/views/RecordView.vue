@@ -128,6 +128,7 @@ export default {
   name: 'RecordView',
   data() {
     return {
+      apiKey: process.env.VUE_APP_RIOT_KEY,
       isBind: true,
       chating: false,
       profile_img_url: process.env.VUE_APP_PROFILE_ICON,
@@ -190,14 +191,14 @@ export default {
     getSummonersAPI() {
       const baseURI =
         'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name'
-      const apiKey = process.env.VUE_APP_RIOT_KEY
       const summoner = this.summoner_name
 
       this.$axios
-        .get(`${baseURI}/${summoner}?api_key=${apiKey}`, '', '')
+        .get(`${baseURI}/${summoner}?api_key=${this.apiKey}`, '', '')
         .then((res) => {
           this.summoner_information = res.data
           this.timeStampConversion()
+          this.getUserMatchs(this.summoner_information.puuid)
           this.css_out = 'content animate__animated animate__fadeOutUp'
 
           setTimeout(() => {
@@ -215,6 +216,19 @@ export default {
             this.isBind = true
           }, 0)
           console.log(JSON.stringify(error))
+        })
+
+      // this.getUserMatchs(this.summoner_information.puuid)
+    },
+    getUserMatchs(puuid) {
+      const baseURI =
+        'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid'
+      const option = 'ids?start=0&count=10'
+
+      this.$axios
+        .get(`${baseURI}/${puuid}/${option}&api_key=${this.apiKey}`, '', '')
+        .then((res) => {
+          console.log(res.data)
         })
 
       this.$q.loading.hide()
