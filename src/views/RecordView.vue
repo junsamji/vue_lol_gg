@@ -16,7 +16,13 @@
       <div class="q-pa-md row justify-center">
         <div style="width: 100%; max-width: 400px">
           <q-chat-message
-            :class="css_chat1"
+            ref="chat1"
+            :class="[
+              { animate__animated: isBind },
+              { animate__fadeIn: isBind },
+              { 'animate__delay-1s': isBind },
+              { 'animate__duration-5s': isBind }
+            ]"
             name="vue_lol_gg"
             :avatar="require('@/assets/jew.png')"
             :text="[messages.message1]"
@@ -25,7 +31,13 @@
             bg-color="grey-4"
           />
           <q-chat-message
-            :class="css_chat2"
+            ref="chat2"
+            :class="[
+              { animate__animated: isBind },
+              { animate__fadeIn: isBind },
+              { 'animate__delay-2s': isBind },
+              { 'animate__duration-4s': isBind }
+            ]"
             name="vue_lol_gg"
             :avatar="require('@/assets/jew.png')"
             :text="[messages.message2]"
@@ -116,7 +128,7 @@ export default {
   name: 'RecordView',
   data() {
     return {
-      working: false,
+      isBind: true,
       chating: false,
       profile_img_url: process.env.VUE_APP_PROFILE_ICON,
       summoner_name: '',
@@ -125,11 +137,7 @@ export default {
         message1: '안녕하세요!',
         message2: '소환사명을 입력해보세요. :)'
       },
-      css_out: 'content',
-      css_chat1:
-        'animate__animated animate__fadeIn animate__delay-1s animate__duration-5s',
-      css_chat2:
-        'animate__animated animate__fadeIn animate__delay-2s animate__duration-4s'
+      css_out: 'content'
     }
   },
   watch: {
@@ -140,10 +148,11 @@ export default {
         this.summoner_information.puuid = undefined
         this.$refs.contentDiv.style.display = 'block'
         this.css_out = 'content'
-        this.css_chat1 =
-          'animate__animated animate__fadeIn animate__delay-1s animate__duration-5s'
-        this.css_chat2 =
-          'animate__animated animate__fadeIn animate__delay-2s animate__duration-4s'
+
+        this.isBind = false
+        setTimeout(() => {
+          this.isBind = true
+        }, 0)
       }
     }
   },
@@ -187,17 +196,10 @@ export default {
       this.$axios
         .get(`${baseURI}/${summoner}?api_key=${apiKey}`, '', '')
         .then((res) => {
-          // this.rotations = res.data
-          // localStorage.setItem('lsRotations', JSON.stringify(res.data))
-          // if (res.data.freeChampionIds.length > 0) {
-          //   localStorage.setItem('date', this.date)
-          // }
-          // this.setRota_champ()
           this.summoner_information = res.data
           this.timeStampConversion()
           this.css_out = 'content animate__animated animate__fadeOutUp'
-          this.css_chat1 = ''
-          this.css_chat2 = ''
+
           setTimeout(() => {
             this.$refs.contentDiv.style.display = 'none'
           }, 100)
@@ -205,12 +207,13 @@ export default {
         .catch((error) => {
           this.$refs.contentDiv.style.display = 'block'
           this.css_out = 'content'
-          this.css_chat1 =
-            'animate__animated animate__fadeIn animate__delay-1s animate__duration-5s'
-          this.css_chat2 =
-            'animate__animated animate__fadeIn animate__delay-2s animate__duration-4s'
+
           this.messages.message1 = '보여드릴 데이터가 없습니다.'
           this.messages.message2 = '존재하는 소환사명을 입력해주세요.'
+          this.isBind = false
+          setTimeout(() => {
+            this.isBind = true
+          }, 0)
           console.log(JSON.stringify(error))
         })
 
