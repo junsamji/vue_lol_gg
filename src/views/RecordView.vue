@@ -264,12 +264,12 @@ export default {
         this.getSummonersAPI()
       }, 500)
     },
-    getSummonersAPI() {
+    async getSummonersAPI() {
       const baseURI =
         'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name'
       const summoner = this.summoner_name
 
-      this.$axios
+      await this.$axios
         .get(`${baseURI}/${summoner}?api_key=${this.apiKey}`, '', '')
         .then((res) => {
           this.summoner_information = res.data
@@ -278,7 +278,7 @@ export default {
           )
           setTimeout(() => {
             this.getUserMatchs(this.summoner_information.puuid)
-          }, 500)
+          }, 1000)
 
           this.css_out = 'content animate__animated animate__fadeOutUp'
 
@@ -301,12 +301,12 @@ export default {
 
       // this.getUserMatchs(this.summoner_information.puuid)
     },
-    getUserMatchs(puuid) {
+    async getUserMatchs(puuid) {
       const baseURI =
         'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid'
       const option = 'ids?start=0&count=10'
 
-      this.$axios
+      await this.$axios
         .get(`${baseURI}/${puuid}/${option}&api_key=${this.apiKey}`, '', '')
         .then((res) => {
           // console.log(res.data)
