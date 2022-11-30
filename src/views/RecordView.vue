@@ -99,7 +99,7 @@
         <div class="col" />
         <div class="col" />
       </div>
-      <div class="row flex-center" style="margin-top: 5px">
+      <div class="row flex-center" style="margin-top: 5px; margin-bottom: 5px">
         <div class="col text-right">
           <q-avatar>
             <img
@@ -117,6 +117,79 @@
           Lv {{ summoner_information.summonerLevel }}
         </div>
       </div>
+      <div class="row">
+        <q-card
+          v-for="(item, i) in matcheLog"
+          :key="i"
+          class="col-12 col-md-12"
+          data-aos="fade-up"
+          data-aos-easing="ease-out-cubic"
+          data-aos-offset="100"
+          data-aos-delay="50"
+          data-aos-duration="1500"
+        >
+          <div v-for="(participant, j) in item.info.participants" :key="j">
+            <div v-if="participant.puuid === summoner_information.puuid">
+              <div
+                v-if="participant.win"
+                class="text-center bg-primary text-white"
+              >
+                승리
+              </div>
+              <div v-else class="text-center bg-negative text-white">패배</div>
+              <q-card-section>
+                <div class="col text-right">
+                  <span>{{ item.info.gameEndTimestamp }}</span>
+                  <span v-if="item.info.gameMode === 'ARAM'">칼바람</span>
+                  <span v-else-if="item.info.gameMode === 'URF'">우르프</span>
+                  <span v-else>그 외</span>
+                </div>
+                <div class="text-center">
+                  <q-avatar>
+                    <img
+                      :src="championImgURL + participant.championName + '.png'"
+                      class="champison_avatar_img"
+                    />
+                  </q-avatar>
+                </div>
+                <div class="text-center">
+                  <q-badge
+                    v-if="participant.pentaKills > 0"
+                    outline
+                    color="negative"
+                    label="Penta Kill"
+                  />
+                  <q-badge
+                    v-else-if="participant.quadraKills > 0"
+                    outline
+                    color="accent"
+                    label="Quadra Kill"
+                  />
+                  <q-badge
+                    v-else-if="participant.tripleKills > 0"
+                    outline
+                    color="orange"
+                    label="Triple Kill"
+                  />
+                  <q-badge
+                    v-else-if="participant.doubleKills > 0"
+                    outline
+                    color="positive"
+                    label="Double Kill"
+                  />
+                </div>
+                <div class="text-center">
+                  <span>{{ participant.kills }}</span>
+                  <span> / </span>
+                  <span>{{ participant.deaths }}</span>
+                  <span> / </span>
+                  <span>{{ participant.assists }}</span>
+                </div>
+              </q-card-section>
+            </div>
+          </div>
+        </q-card>
+      </div>
     </div>
   </div>
 </template>
@@ -129,11 +202,14 @@ export default {
   data() {
     return {
       apiKey: process.env.VUE_APP_RIOT_KEY,
+      championImgURL: process.env.VUE_APP_RIOT_IMG,
+      profile_img_url: process.env.VUE_APP_PROFILE_ICON,
       isBind: true,
       chating: false,
-      profile_img_url: process.env.VUE_APP_PROFILE_ICON,
       summoner_name: '',
       summoner_information: {},
+      matchesId: [],
+      matcheLog: [],
       messages: {
         message1: '안녕하세요!',
         message2: '소환사명을 입력해보세요. :)'
@@ -197,8 +273,13 @@ export default {
         .get(`${baseURI}/${summoner}?api_key=${this.apiKey}`, '', '')
         .then((res) => {
           this.summoner_information = res.data
-          this.timeStampConversion()
-          this.getUserMatchs(this.summoner_information.puuid)
+          this.summoner_information.revisionDate = this.timeStampConversion(
+            this.summoner_information.revisionDate
+          )
+          setTimeout(() => {
+            this.getUserMatchs(this.summoner_information.puuid)
+          }, 500)
+
           this.css_out = 'content animate__animated animate__fadeOutUp'
 
           setTimeout(() => {
@@ -228,13 +309,67 @@ export default {
       this.$axios
         .get(`${baseURI}/${puuid}/${option}&api_key=${this.apiKey}`, '', '')
         .then((res) => {
-          console.log(res.data)
+          // console.log(res.data)
+          this.matchesId = res.data
+          setTimeout(() => {
+            this.getMatchLog()
+          }, 500)
         })
+        .catch((error) => {
+          this.$refs.contentDiv.style.display = 'block'
+          this.css_out = 'copntent'
 
+          this.messages.message1 = '최근경기 조회시 오류가 발생하였습니다.'
+          this.messages.message2 = '개발자에게 문의해주세요.'
+          this.isBind = false
+          setTimeout(() => {
+            this.isBind = true
+          }, 0)
+          console.log(JSON.stringify(error))
+        })
+    },
+    async getMatchLog() {
+      this.matcheLog.splice(0)
+      // console.log(JSON.stringify(this.matches))
+      const baseURI = 'https://asia.api.riotgames.com/lol/match/v5/matches'
+
+      for (const key in this.matchesId) {
+        // console.log('request:' + this.matchesId[key])
+        await this.$axios
+          .get(
+            `${baseURI}/${this.matchesId[key]}?api_key=${this.apiKey}`,
+            '',
+            ''
+          )
+          .then((res) => {
+            // console.log(res.data.metadata.matchId)
+            this.matcheLog.push(res.data)
+            // console.log(this.matcheLog[key].info.gameEndTimestamp)
+            this.matcheLog[key].info.gameEndTimestamp =
+              this.timeStampConversion(
+                this.matcheLog[key].info.gameEndTimestamp
+              )
+          })
+          .catch((error) => {
+            this.matcheLog.splice(0)
+            this.$refs.contentDiv.style.display = 'block'
+            this.css_out = 'copntent'
+
+            this.messages.message1 = '경기 결과 로드 오류가 발생하였습니다.'
+            this.messages.message2 = '개발자에게 문의해주세요.'
+            this.isBind = false
+            setTimeout(() => {
+              this.isBind = true
+            }, 0)
+            console.log(JSON.stringify(error))
+          })
+      }
+
+      // console.log(this.matcheLog)
       this.$q.loading.hide()
     },
-    timeStampConversion() {
-      const dateTime = new Date(this.summoner_information.revisionDate)
+    timeStampConversion(datetime) {
+      const dateTime = new Date(datetime)
       const year = dateTime.getFullYear()
       const month = ('00' + (dateTime.getMonth() + 1)).slice(-2)
       const day = ('00' + dateTime.getDate()).slice(-2)
@@ -246,8 +381,8 @@ export default {
         ('00' + dateTime.getSeconds()).slice(-2)
 
       // console.log(dateTime)
-      this.summoner_information.revisionDate =
-        year + '/' + month + '/' + day + ' ' + time
+      // this.summoner_information.revisionDate =
+      return year + '/' + month + '/' + day + ' ' + time
     }
   }
 }
@@ -256,6 +391,10 @@ export default {
 @import '@/style/common.css';
 </style>
 <style scoped>
+span {
+  padding-left: 0.5rem;
+}
+
 hr {
   width: 91%;
   height: 2px;
@@ -286,5 +425,11 @@ hr {
   max-width: 100px;
   width: 30%;
   padding-top: 5px;
+}
+
+.champison_avatar_img {
+  max-width: 100px;
+  width: 50%;
+  padding-bottom: 5px;
 }
 </style>
