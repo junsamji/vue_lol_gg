@@ -1,17 +1,6 @@
 <template>
   <div class="record">
-    <!-- <div v-else style="padding-top: 30px">
-      <div class="row flex-center">
-        <div class="col-2" />
-        <div class="col text-left">{{ messages.message1 }}</div>
-        <div class="col-2" />
-      </div>
-      <div class="row flex-center">
-        <div class="col-2" />
-        <div class="col text-left">{{ messages.message2 }}</div>
-        <div class="col-2" />
-      </div>
-    </div> -->
+    <input ref="noneFocus" inputmode="none" :style="dummyfocus" />
     <div ref="contentDiv" :class="css_out">
       <div class="q-pa-md row justify-center">
         <div style="width: 100%; max-width: 400px">
@@ -204,6 +193,7 @@ export default {
       apiKey: process.env.VUE_APP_RIOT_KEY,
       championImgURL: process.env.VUE_APP_RIOT_IMG,
       profile_img_url: process.env.VUE_APP_PROFILE_ICON,
+      isException: false,
       isBind: true,
       chating: false,
       summoner_name: '',
@@ -214,7 +204,8 @@ export default {
         message1: '안녕하세요!',
         message2: '소환사명을 입력해보세요. :)'
       },
-      css_out: 'content'
+      css_out: 'content',
+      dummyfocus: 'display:none'
     }
   },
   watch: {
@@ -235,10 +226,26 @@ export default {
   },
   methods: {
     keyEnter() {
-      // this.$refs.txt
-      this.$refs.btnSearch.click()
+      this.dummyfocus = 'display:block'
+
+      setTimeout(() => {
+        this.$refs.noneFocus.focus()
+        this.dummyfocus = 'display:none'
+      }, 0)
+
+      this.searchSpan()
     },
     searchSpan() {
+      const conResult = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (!this.isException) {
+            resolve('OK')
+          } else {
+            reject(Error('isException'))
+          }
+        }, 1500)
+      })
+
       if (this.summoner_name === '') {
         this.$q.notify({
           color: 'yellow',
@@ -260,113 +267,151 @@ export default {
         messageColor: 'yellow'
       })
 
-      setTimeout(() => {
-        this.getSummonersAPI()
-      }, 500)
-    },
-    async getSummonersAPI() {
-      const baseURI =
-        'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name'
-      const summoner = this.summoner_name
+      this.getSummonersAPI()
 
-      await this.$axios
-        .get(`${baseURI}/${summoner}?api_key=${this.apiKey}`, '', '')
-        .then((res) => {
-          this.summoner_information = res.data
-          this.summoner_information.revisionDate = this.timeStampConversion(
-            this.summoner_information.revisionDate
-          )
+      conResult
+        .then(() => {
+          this.getUserMatchs(this.summoner_information.puuid)
           setTimeout(() => {
-            this.getUserMatchs(this.summoner_information.puuid)
-          }, 1000)
-
-          this.css_out = 'content animate__animated animate__fadeOutUp'
-
-          setTimeout(() => {
-            this.$refs.contentDiv.style.display = 'none'
-          }, 100)
-        })
-        .catch((error) => {
-          this.$refs.contentDiv.style.display = 'block'
-          this.css_out = 'content'
-
-          this.messages.message1 = '보여드릴 데이터가 없습니다.'
-          this.messages.message2 = '존재하는 소환사명을 입력해주세요.'
-          this.isBind = false
-          setTimeout(() => {
-            this.isBind = true
-          }, 0)
-          console.log(JSON.stringify(error))
-        })
-
-      // this.getUserMatchs(this.summoner_information.puuid)
-    },
-    async getUserMatchs(puuid) {
-      const baseURI =
-        'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid'
-      const option = 'ids?start=0&count=10'
-
-      await this.$axios
-        .get(`${baseURI}/${puuid}/${option}&api_key=${this.apiKey}`, '', '')
-        .then((res) => {
-          // console.log(res.data)
-          this.matchesId = res.data
-          setTimeout(() => {
-            this.getMatchLog()
+            this.$q.loading.hide()
           }, 500)
         })
-        .catch((error) => {
-          this.$refs.contentDiv.style.display = 'block'
-          this.css_out = 'copntent'
-
-          this.messages.message1 = '최근경기 조회시 오류가 발생하였습니다.'
-          this.messages.message2 = '개발자에게 문의해주세요.'
-          this.isBind = false
-          setTimeout(() => {
-            this.isBind = true
-          }, 0)
-          console.log(JSON.stringify(error))
+        .catch(() => {
+          this.$q.loading.hide()
+          console.log('머선일이구!')
         })
     },
-    async getMatchLog() {
-      this.matcheLog.splice(0)
-      // console.log(JSON.stringify(this.matches))
-      const baseURI = 'https://asia.api.riotgames.com/lol/match/v5/matches'
+    async getSummonersAPI() {
+      // console.log('getSummonersAPI')
 
-      for (const key in this.matchesId) {
-        // console.log('request:' + this.matchesId[key])
-        await this.$axios
-          .get(
-            `${baseURI}/${this.matchesId[key]}?api_key=${this.apiKey}`,
-            '',
-            ''
-          )
-          .then((res) => {
-            // console.log(res.data.metadata.matchId)
-            this.matcheLog.push(res.data)
-            // console.log(this.matcheLog[key].info.gameEndTimestamp)
-            this.matcheLog[key].info.gameEndTimestamp =
-              this.timeStampConversion(
-                this.matcheLog[key].info.gameEndTimestamp
-              )
-          })
-          .catch((error) => {
-            this.matcheLog.splice(0)
-            this.$refs.contentDiv.style.display = 'block'
-            this.css_out = 'copntent'
+      try {
+        const baseURI =
+          'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name'
+        const summoner = this.summoner_name
 
-            this.messages.message1 = '경기 결과 로드 오류가 발생하였습니다.'
-            this.messages.message2 = '개발자에게 문의해주세요.'
-            this.isBind = false
-            setTimeout(() => {
-              this.isBind = true
-            }, 0)
-            console.log(JSON.stringify(error))
-          })
+        const response = await this.$axios.get(
+          `${baseURI}/${summoner}?api_key=${this.apiKey}`
+        )
+        this.summoner_information = response.data
+        this.summoner_information.revisionDate = this.timeStampConversion(
+          this.summoner_information.revisionDate
+        )
+        this.css_out = 'content animate__animated animate__fadeOutUp'
+
+        setTimeout(() => {
+          this.$refs.contentDiv.style.display = 'none'
+        }, 100)
+
+        this.isException = false
+      } catch (error) {
+        this.isException = true
+        this.$refs.contentDiv.style.display = 'block'
+        this.css_out = 'content'
+
+        this.messages.message1 = '보여드릴 데이터가 없습니다.'
+        this.messages.message2 = '존재하는 소환사명을 입력해주세요.'
+        this.isBind = false
+        setTimeout(() => {
+          this.isBind = true
+        }, 0)
+        console.log(JSON.stringify(error.message))
+        this.$q.loading.hide()
       }
 
-      // console.log(this.matcheLog)
-      this.$q.loading.hide()
+      // await this.$axios
+      //   .get(`${baseURI}/${summoner}?api_key=${this.apiKey}`, '', '')
+      //   .then((res) => {
+      //     this.summoner_information = res.data
+      //     this.summoner_information.revisionDate = this.timeStampConversion(
+      //       this.summoner_information.revisionDate
+      //     )
+
+      //     this.css_out = 'content animate__animated animate__fadeOutUp'
+
+      //     setTimeout(() => {
+      //       this.$refs.contentDiv.style.display = 'none'
+      //     }, 100)
+      //   })
+      //   .catch((error) => {
+      //     this.$refs.contentDiv.style.display = 'block'
+      //     this.css_out = 'content'
+
+      //     this.messages.message1 = '보여드릴 데이터가 없습니다.'
+      //     this.messages.message2 = '존재하는 소환사명을 입력해주세요.'
+      //     this.isBind = false
+      //     setTimeout(() => {
+      //       this.isBind = true
+      //     }, 0)
+      //     console.log(JSON.stringify(error.message))
+      //   })
+    },
+    async getUserMatchs(puuid) {
+      // console.log('getUserMatchs')
+
+      try {
+        const baseURI =
+          'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid'
+        const option = 'ids?start=0&count=10'
+
+        const response = await this.$axios.get(
+          `${baseURI}/${puuid}/${option}&api_key=${this.apiKey}`,
+          '',
+          ''
+        )
+        this.matchesId = response.data
+        // console.log(JSON.stringify(this.matchesId))
+        this.getMatchLog()
+      } catch (error) {
+        this.$refs.contentDiv.style.display = 'block'
+        this.css_out = 'content'
+
+        this.messages.message1 = '최근경기 조회시 오류가 발생하였습니다.'
+        this.messages.message2 = '개발자에게 문의해주세요.'
+        this.isBind = false
+        setTimeout(() => {
+          this.isBind = true
+        }, 0)
+        console.log(error)
+      }
+    },
+    getMatchLog() {
+      // console.log('getMatchLog')
+
+      this.matcheLog.splice(0)
+
+      try {
+        const baseURI = 'https://asia.api.riotgames.com/lol/match/v5/matches'
+
+        this.matchesId.reduce((previous, current, i) => {
+          return previous.then(async () => {
+            const response = await this.$axios.get(
+              `${baseURI}/${current}?api_key=${this.apiKey}`,
+              '',
+              ''
+            )
+
+            this.matcheLog.push(response.data)
+            this.matcheLog[i].info.gameEndTimestamp = this.timeStampConversion(
+              this.matcheLog[i].info.gameEndTimestamp
+            )
+          })
+        }, Promise.resolve())
+
+        // console.log(this.matcheLog)
+      } catch (error) {
+        this.matcheLog.splice(0)
+        this.$refs.contentDiv.style.display = 'block'
+        this.css_out = 'content'
+
+        this.messages.message1 = '경기 결과 로드 오류가 발생하였습니다.'
+        this.messages.message2 = '개발자에게 문의해주세요.'
+        this.isBind = false
+        setTimeout(() => {
+          this.isBind = true
+        }, 0)
+
+        console.log(JSON.stringify(error))
+      }
     },
     timeStampConversion(datetime) {
       const dateTime = new Date(datetime)
@@ -380,8 +425,6 @@ export default {
         ':' +
         ('00' + dateTime.getSeconds()).slice(-2)
 
-      // console.log(dateTime)
-      // this.summoner_information.revisionDate =
       return year + '/' + month + '/' + day + ' ' + time
     }
   }
