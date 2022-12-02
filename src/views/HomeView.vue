@@ -203,7 +203,8 @@ div {
 .home {
   width: 80%;
   height: 100%;
-  margin: 70px auto;
+  margin: 2rem auto;
+  padding-top: 0.1rem;
 }
 
 .title {
