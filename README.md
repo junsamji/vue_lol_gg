@@ -1,5 +1,8 @@
 # vue_lol_gg
 
+## Visit Site
+https://junsamji.github.io/vue_lol_gg/
+
 ## Project setup
 
 ```
