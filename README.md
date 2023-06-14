@@ -1,5 +1,10 @@
 # vue_lol_gg
 
+## Version Info
+
+node : v14.21.1
+npm : 6.14.17
+
 ## Project setup
 
 ```
