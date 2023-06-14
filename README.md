@@ -5,6 +5,10 @@
 node : v14.21.1
 npm : 6.14.17
 
+## Visit Site
+
+https://junsamji.github.io/vue_lol_gg/
+
 ## Project setup
 
 ```
